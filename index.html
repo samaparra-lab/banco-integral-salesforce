@@ -223,6 +223,20 @@
     footer p{color:#444;font-size:13px;margin-top:6px;}
     footer strong{color:var(--rn-coral);}
 
+    /* ── TEAM CARDS ── */
+    .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;margin-top:8px;}
+    .team-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 24px;text-align:center;transition:transform .2s,border-color .2s;}
+    .team-card:hover{transform:translateY(-4px);}
+    .team-avatar{width:96px;height:96px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#fff;position:relative;}
+    .team-avatar .av-ring{position:absolute;inset:-3px;border-radius:50%;border:3px solid transparent;}
+    .team-name{font-size:18px;font-weight:800;color:var(--white);margin-bottom:4px;}
+    .team-role{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.4;}
+    .team-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;}
+    .badge-sf{background:rgba(0,161,224,.15);border:1px solid rgba(0,161,224,.3);color:#60CFFF;}
+    .badge-ex{background:rgba(245,200,66,.12);border:1px solid rgba(245,200,66,.3);color:var(--ex-yellow);}
+    .badge-rn{background:rgba(244,132,106,.15);border:1px solid rgba(244,132,106,.3);color:var(--rn-coral);}
+    .tab-btn.eq.active{color:#F5A623;border-bottom-color:#F5A623;}
+
     @media(max-width:768px){
       .main-tabs{padding:0 16px;flex-wrap:wrap;}
       .section{padding:48px 20px;}
@@ -237,13 +251,27 @@
 <!-- MAIN TABS NAV -->
 <nav class="main-tabs">
   <div class="brand">
-    <div class="brand-dot"></div>
-    <span class="brand-name">Banco Integral</span>
+    <!-- Banco Integral Logo SVG -->
+    <svg width="140" height="40" viewBox="0 0 140 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Person figure icon -->
+      <circle cx="118" cy="8" r="5" fill="#F47920"/>
+      <line x1="118" y1="13" x2="118" y2="26" stroke="#F47920" stroke-width="3" stroke-linecap="round"/>
+      <line x1="110" y1="18" x2="126" y2="18" stroke="#F47920" stroke-width="3" stroke-linecap="round"/>
+      <line x1="118" y1="26" x2="112" y2="36" stroke="#F47920" stroke-width="3" stroke-linecap="round"/>
+      <line x1="118" y1="26" x2="124" y2="36" stroke="#F47920" stroke-width="3" stroke-linecap="round"/>
+      <!-- Text: Banco -->
+      <text x="0" y="17" font-family="'Segoe UI',Arial,sans-serif" font-size="15" font-weight="800" fill="#ffffff">Banco</text>
+      <!-- Text: Integral -->
+      <text x="0" y="34" font-family="'Segoe UI',Arial,sans-serif" font-size="15" font-weight="800" fill="#F47920">Integral</text>
+      <!-- Subtitle -->
+      <text x="0" y="42" font-family="'Segoe UI',Arial,sans-serif" font-size="7" fill="rgba(255,255,255,0.45)">Tu Banco Mype</text>
+    </svg>
   </div>
   <div class="tab-nav">
     <button class="tab-btn sf active" onclick="switchTab('sf',this)">☁️ Salesforce</button>
     <button class="tab-btn rn" onclick="switchTab('rn',this)">⚡ Reach Now</button>
     <button class="tab-btn ex" onclick="switchTab('ex',this)">🌎 Expand</button>
+    <button class="tab-btn eq" onclick="switchTab('eq',this)">👥 Equipo</button>
   </div>
 </nav>
 
@@ -937,6 +965,107 @@
       </div>
     </div>
   </section>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 4: EQUIPO
+══════════════════════════════════════════ -->
+<div id="tab-eq" class="tab-content">
+
+  <!-- HERO EQUIPO -->
+  <div class="hero" style="background:linear-gradient(135deg,#0d0d0d 0%,#1a1010 40%,#101a10 100%);border-bottom:1px solid #222;padding:80px 40px 70px;">
+    <div class="hero-tag" style="background:rgba(244,121,32,.15);border:1px solid rgba(244,121,32,.35);color:#F47920;">Equipo Dedicado</div>
+    <h1 style="color:#fff;font-size:clamp(28px,4.5vw,52px);font-weight:900;margin-bottom:16px;">
+      Equipo para<br><span style="color:#F47920;">Banco Integral</span>
+    </h1>
+    <p style="color:rgba(255,255,255,.65);font-size:17px;max-width:580px;margin:0 auto 32px;">Un equipo multidisciplinario de Salesforce, Expand y ReachNow, con amplia experiencia en servicios financieros y transformación digital para banca.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
+      <span class="pill" style="background:rgba(0,161,224,.15);border-color:rgba(0,161,224,.3);color:#80DFFF;">Salesforce</span>
+      <span class="pill" style="background:rgba(244,121,32,.12);border-color:rgba(244,121,32,.3);color:#F47920;">Expand</span>
+      <span class="pill" style="background:rgba(244,132,106,.15);border-color:rgba(244,132,106,.3);color:var(--rn-coral);">ReachNow</span>
+    </div>
+  </div>
+
+  <!-- TEAM CARDS -->
+  <section class="section" style="background:#111;">
+    <div class="section-inner">
+      <div class="team-grid">
+
+        <!-- Sandra Parra - Salesforce -->
+        <div class="team-card" style="border-color:rgba(0,161,224,.25);">
+          <div class="team-avatar" style="background:linear-gradient(135deg,#032D60,#00A1E0);margin-bottom:20px;">
+            SP
+            <div class="av-ring" style="border-color:rgba(0,161,224,.5);"></div>
+          </div>
+          <div class="team-name">Sandra Parra</div>
+          <div class="team-role">Account Executive<br>Servicios Financieros LATAM</div>
+          <span class="team-badge badge-sf">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" fill="#60CFFF"/></svg>
+            Salesforce
+          </span>
+        </div>
+
+        <!-- Camilo Sierra - Salesforce -->
+        <div class="team-card" style="border-color:rgba(0,161,224,.25);">
+          <div class="team-avatar" style="background:linear-gradient(135deg,#0B5CAB,#1798C1);margin-bottom:20px;">
+            CS
+            <div class="av-ring" style="border-color:rgba(0,161,224,.5);"></div>
+          </div>
+          <div class="team-name">Camilo Sierra</div>
+          <div class="team-role">Solutions Engineer<br>Financial Services Cloud</div>
+          <span class="team-badge badge-sf">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" fill="#60CFFF"/></svg>
+            Salesforce
+          </span>
+        </div>
+
+        <!-- Sandra Parra - Expand -->
+        <div class="team-card" style="border-color:rgba(245,200,66,.2);">
+          <div class="team-avatar" style="background:linear-gradient(135deg,#0A1F44,#1E6AE1);margin-bottom:20px;">
+            SP
+            <div class="av-ring" style="border-color:rgba(245,200,66,.5);"></div>
+          </div>
+          <div class="team-name">Sandra Parra</div>
+          <div class="team-role">Account Executive<br>Licenciamiento Salesforce</div>
+          <span class="team-badge badge-ex">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="none" stroke="#F5C842" stroke-width="2"/><path d="M8 12h8M12 8l4 4-4 4" stroke="#F5C842" stroke-width="2" stroke-linecap="round"/></svg>
+            Expand
+          </span>
+        </div>
+
+        <!-- German Hernandez - ReachNow -->
+        <div class="team-card" style="border-color:rgba(244,132,106,.25);">
+          <div class="team-avatar" style="background:linear-gradient(135deg,#2a1010,#8B2500);margin-bottom:20px;">
+            GH
+            <div class="av-ring" style="border-color:rgba(244,132,106,.5);"></div>
+          </div>
+          <div class="team-name">German Hernandez</div>
+          <div class="team-role">Managing Director<br>Implementación Salesforce FSC</div>
+          <span class="team-badge badge-rn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" fill="none" stroke="var(--rn-coral)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            ReachNow
+          </span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BI LOGO CIERRE -->
+  <div style="background:#0a0a0a;padding:60px 40px;text-align:center;border-top:1px solid #1a1a1a;">
+    <svg width="180" height="52" viewBox="0 0 180 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 20px;display:block;">
+      <circle cx="154" cy="10" r="7" fill="#F47920"/>
+      <line x1="154" y1="17" x2="154" y2="34" stroke="#F47920" stroke-width="4" stroke-linecap="round"/>
+      <line x1="143" y1="24" x2="165" y2="24" stroke="#F47920" stroke-width="4" stroke-linecap="round"/>
+      <line x1="154" y1="34" x2="145" y2="47" stroke="#F47920" stroke-width="4" stroke-linecap="round"/>
+      <line x1="154" y1="34" x2="163" y2="47" stroke="#F47920" stroke-width="4" stroke-linecap="round"/>
+      <text x="0" y="22" font-family="'Segoe UI',Arial,sans-serif" font-size="20" font-weight="800" fill="#ffffff">Banco</text>
+      <text x="0" y="44" font-family="'Segoe UI',Arial,sans-serif" font-size="20" font-weight="800" fill="#F47920">Integral</text>
+      <text x="0" y="54" font-family="'Segoe UI',Arial,sans-serif" font-size="9" fill="rgba(255,255,255,0.4)">Tu Banco Mype</text>
+    </svg>
+    <p style="color:#333;font-size:13px;">Propuesta confidencial · Junio 2026 · Válida por 30 días</p>
+  </div>
 
 </div>
 
