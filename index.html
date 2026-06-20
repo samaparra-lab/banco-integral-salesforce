@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Banco Integral · Propuesta Salesforce</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #0d0d0d;
+      --bg2: #141414;
+      --bg3: #1a1a1a;
+      --card: #1e1e1e;
+      --border: #2a2a2a;
+      --text: #f0f0f0;
+      --muted: #888;
+      --sf-blue: #00A1E0;
+      --sf-dark: #032D60;
+      --rn-coral: #F4846A;
+      --rn-bg: #111;
+      --ex-blue: #1E6AE1;
+      --ex-yellow: #F5C842;
+      --white: #fff;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+
+    /* ── MAIN TABS ── */
+    .main-tabs{position:sticky;top:0;z-index:100;background:rgba(13,13,13,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 40px;}
+    .main-tabs .brand{display:flex;align-items:center;gap:10px;padding:14px 0;}
+    .brand-dot{width:10px;height:10px;border-radius:50%;background:var(--rn-coral);}
+    .brand-name{font-size:15px;font-weight:800;color:var(--white);letter-spacing:.5px;}
+    .tab-nav{display:flex;gap:4px;}
+    .tab-btn{padding:12px 28px;background:transparent;border:none;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+    .tab-btn:hover{color:var(--white);}
+    .tab-btn.sf.active{color:var(--sf-blue);border-bottom-color:var(--sf-blue);}
+    .tab-btn.rn.active{color:var(--rn-coral);border-bottom-color:var(--rn-coral);}
+    .tab-btn.ex.active{color:var(--ex-blue);border-bottom-color:var(--ex-blue);}
+    .tab-content{display:none;}
+    .tab-content.active{display:block;animation:fadeIn .35s ease;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── HERO ── */
+    .hero{padding:80px 40px 70px;text-align:center;position:relative;overflow:hidden;}
+    .hero.sf-hero{background:linear-gradient(135deg,#032D60 0%,#0B5CAB 60%,#1798C1 100%);}
+    .hero.rn-hero{background:linear-gradient(135deg,#0d0d0d 0%,#1a1a1a 100%);}
+    .hero.ex-hero{background:linear-gradient(135deg,#0A1F44 0%,#1E3A6E 60%,#1565C0 100%);}
+    .hero-tag{display:inline-block;padding:5px 16px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;}
+    .sf-tag{background:rgba(0,161,224,.2);border:1px solid rgba(0,161,224,.4);color:#60CFFF;}
+    .rn-tag{background:rgba(244,132,106,.15);border:1px solid rgba(244,132,106,.4);color:var(--rn-coral);}
+    .ex-tag{background:rgba(30,106,225,.2);border:1px solid rgba(30,106,225,.4);color:#80AAFF;}
+    .hero h1{font-size:clamp(28px,4.5vw,56px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:16px;}
+    .hero h1 span.accent-sf{color:#00D4FF;}
+    .hero h1 span.accent-rn{color:var(--rn-coral);}
+    .hero h1 span.accent-ex{color:var(--ex-yellow);}
+    .hero p{color:rgba(255,255,255,.7);font-size:17px;max-width:640px;margin:0 auto 36px;}
+    .hero-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+    .pill{padding:7px 18px;border-radius:30px;font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);}
+    .pill-sf{background:rgba(0,161,224,.15);border-color:rgba(0,161,224,.35);color:#80DFFF;}
+    .pill-rn{background:rgba(244,132,106,.15);border-color:rgba(244,132,106,.35);color:var(--rn-coral);}
+    .pill-ex{background:rgba(245,200,66,.15);border-color:rgba(245,200,66,.35);color:var(--ex-yellow);}
+
+    /* ── SECTIONS ── */
+    .section{padding:72px 40px;}
+    .section-inner{max-width:1100px;margin:0 auto;}
+    .sec-tag{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+    .sf .sec-tag,.sec-tag.sf{color:var(--sf-blue);}
+    .rn .sec-tag,.sec-tag.rn{color:var(--rn-coral);}
+    .ex .sec-tag,.sec-tag.ex{color:var(--ex-blue);}
+    .sec-title{font-size:clamp(22px,3vw,36px);font-weight:800;color:var(--white);margin-bottom:12px;}
+    .sec-desc{color:var(--muted);font-size:15px;max-width:680px;margin-bottom:40px;line-height:1.7;}
+    .divider{width:56px;height:3px;border-radius:2px;margin:14px 0 32px;}
+    .divider.sf{background:linear-gradient(90deg,var(--sf-blue),#00AEEF);}
+    .divider.rn{background:linear-gradient(90deg,var(--rn-coral),#FFB89A);}
+    .divider.ex{background:linear-gradient(90deg,var(--ex-blue),var(--ex-yellow));}
+
+    /* bg alts */
+    .bg-alt{background:var(--bg2);}
+    .bg-dark{background:var(--bg3);}
+
+    /* ── CARDS ── */
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:20px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:border-color .2s,transform .2s;}
+    .card:hover{transform:translateY(-2px);}
+    .card.sf-card:hover{border-color:rgba(0,161,224,.4);}
+    .card.rn-card:hover{border-color:rgba(244,132,106,.4);}
+    .card.ex-card:hover{border-color:rgba(30,106,225,.4);}
+    .card-icon{font-size:28px;margin-bottom:14px;}
+    .card h3{font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px;}
+    .card p{font-size:13px;color:var(--muted);line-height:1.65;}
+
+    /* ── STEPS ── */
+    .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;}
+    .step-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center;}
+    .step-num{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;margin:0 auto 14px;}
+    .step-num.sf{background:rgba(0,161,224,.15);color:var(--sf-blue);}
+    .step-num.rn{background:rgba(244,132,106,.15);color:var(--rn-coral);}
+    .step-num.ex{background:rgba(30,106,225,.15);color:#80AAFF;}
+    .step-card h4{font-size:14px;font-weight:700;color:var(--white);margin-bottom:6px;}
+    .step-card p{font-size:12px;color:var(--muted);line-height:1.6;}
+    .step-comps{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}
+    .comp-chip{font-size:10px;padding:3px 8px;border-radius:10px;background:rgba(244,132,106,.1);color:var(--rn-coral);border:1px solid rgba(244,132,106,.2);}
+
+    /* ── COMPARISON ── */
+    .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+    .compare-col{background:var(--card);border-radius:16px;padding:28px;border:1px solid var(--border);}
+    .compare-col.from{border-left:4px solid #555;}
+    .compare-col.to{border-left:4px solid var(--rn-coral);}
+    .compare-col h3{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}
+    .compare-col.from h3{color:#666;}
+    .compare-col.to h3{color:var(--rn-coral);}
+    .compare-col ul{list-style:none;}
+    .compare-col li{padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:8px;}
+    .compare-col li:last-child{border-bottom:none;}
+    .compare-col.to li{color:rgba(255,255,255,.8);}
+    .compare-col.from li::before{content:'✕';color:#555;flex-shrink:0;}
+    .compare-col.to li::before{content:'✓';color:var(--rn-coral);font-weight:700;flex-shrink:0;}
+
+    /* ── ARCHITECTURE LAYERS ── */
+    .arch-layers{display:flex;flex-direction:column;gap:8px;}
+    .arch-layer{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;}
+    .arch-layer.blue{border-left:4px solid var(--sf-blue);}
+    .arch-layer.coral{border-left:4px solid var(--rn-coral);}
+    .arch-layer.gray{border-left:4px solid #444;}
+    .arch-layer h4{font-size:14px;font-weight:700;color:var(--white);}
+    .arch-layer span{font-size:12px;color:var(--muted);}
+    .arch-arrow{text-align:center;color:#444;font-size:18px;margin:0;}
+
+    /* ── ROADMAP ── */
+    .roadmap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+    .rm-card{background:var(--card);border-radius:14px;padding:24px;border:1px solid var(--border);}
+    .rm-sprint{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+    .rm-card h3{font-size:17px;font-weight:800;color:var(--white);margin-bottom:8px;}
+    .rm-card p{font-size:13px;color:var(--muted);line-height:1.6;}
+    .rm-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;margin-bottom:12px;}
+    .rm-r1{background:rgba(244,132,106,.15);color:var(--rn-coral);border:1px solid rgba(244,132,106,.3);}
+    .rm-r2{background:rgba(30,106,225,.15);color:#80AAFF;border:1px solid rgba(30,106,225,.3);}
+    .rm-r3{background:rgba(245,200,66,.12);color:var(--ex-yellow);border:1px solid rgba(245,200,66,.3);}
+
+    /* ── SPRINT TABLE ── */
+    .sprint-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden;margin-bottom:32px;}
+    .sprint-table thead tr{background:#1e1e1e;}
+    .sprint-table th{padding:12px 16px;text-align:left;font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);}
+    .sprint-table td{padding:14px 16px;font-size:13px;border-top:1px solid var(--border);color:rgba(255,255,255,.8);vertical-align:top;}
+    .sprint-table tr:hover td{background:rgba(255,255,255,.02);}
+    .sprint-table .sprint-id{font-weight:800;color:var(--rn-coral);white-space:nowrap;}
+    .sprint-table .sprint-obj{color:rgba(255,255,255,.9);}
+    .sprint-table .sprint-del{color:var(--muted);font-size:12px;}
+    .release-header td{background:rgba(244,132,106,.08);color:var(--rn-coral);font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:10px 16px;}
+
+    /* ── RISKS ── */
+    .risk-list{display:flex;flex-direction:column;gap:12px;}
+    .risk-item{background:var(--card);border-radius:12px;padding:20px 24px;border-left:4px solid #E65100;display:flex;gap:16px;align-items:flex-start;}
+    .risk-item.mitigated{border-left-color:#2E7D32;}
+    .risk-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+    .risk-item h4{font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px;}
+    .risk-item p{font-size:13px;color:var(--muted);}
+
+    /* ── INVEST CARDS ── */
+    .inv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:32px;}
+    .inv-card{border-radius:16px;padding:32px;text-align:center;}
+    .inv-card.main-inv{background:linear-gradient(135deg,#0d0d0d,#1a1a1a);border:1px solid rgba(244,132,106,.3);}
+    .inv-card.sec-inv{background:var(--card);border:1px solid var(--border);}
+    .inv-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+    .inv-price{font-size:36px;font-weight:900;line-height:1;}
+    .inv-card.main-inv .inv-price{color:var(--rn-coral);}
+    .inv-card.sec-inv .inv-price{color:var(--white);}
+    .inv-sub{font-size:12px;color:var(--muted);margin-top:6px;}
+
+    /* ── LICENSE TABLE ── */
+    .lic-table{width:100%;border-collapse:collapse;border-radius:14px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,.3);}
+    .lic-table thead tr{background:#032D60;}
+    .lic-table th{padding:13px 16px;font-size:12px;font-weight:700;color:rgba(255,255,255,.8);text-align:left;letter-spacing:.5px;}
+    .lic-table td{padding:14px 16px;font-size:13px;border-top:1px solid var(--border);background:var(--card);color:rgba(255,255,255,.85);}
+    .lic-table tr:nth-child(even) td{background:#1a1a1a;}
+    .lic-table .lic-total{background:#1E6AE1 !important;color:#fff !important;font-weight:900;}
+    .lic-table .lic-total td{background:#1E6AE1;color:#fff;font-size:15px;}
+
+    /* ── TIMELINE ── */
+    .timeline-strip{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 28px;margin-bottom:32px;gap:0;overflow-x:auto;}
+    .tl-point{text-align:center;flex:1;min-width:100px;}
+    .tl-dot{width:14px;height:14px;border-radius:50%;margin:0 auto 8px;}
+    .tl-dot.active{background:var(--ex-yellow);}
+    .tl-dot.inactive{background:#333;border:2px solid #555;}
+    .tl-label{font-size:11px;font-weight:700;color:var(--white);}
+    .tl-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+    .tl-line{flex:1;height:2px;background:linear-gradient(90deg,var(--ex-yellow),#555);min-width:30px;}
+
+    /* ── TERMS ── */
+    .terms-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+    .term-item{background:var(--card);border-radius:12px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;border:1px solid var(--border);}
+    .term-icon{font-size:20px;flex-shrink:0;}
+    .term-item h4{font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px;}
+    .term-item p{font-size:12px;color:var(--muted);}
+
+    /* ── COUNTRIES ── */
+    .countries-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;}
+    .country-chip{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-align:center;font-size:13px;font-weight:600;color:rgba(255,255,255,.8);}
+    .country-chip:hover{border-color:var(--ex-blue);}
+
+    /* ── BENEFITS ── */
+    .benefit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
+    .benefit-item{background:var(--card);border-radius:12px;padding:20px 22px;display:flex;gap:14px;align-items:flex-start;border:1px solid var(--border);}
+    .benefit-num{width:32px;height:32px;border-radius:10px;background:rgba(30,106,225,.15);border:1px solid rgba(30,106,225,.3);color:#80AAFF;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .benefit-item p{font-size:13px;color:rgba(255,255,255,.8);line-height:1.6;}
+
+    /* ── CONTACT ── */
+    .contact-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:40px;display:flex;gap:32px;align-items:center;flex-wrap:wrap;}
+    .contact-info h3{font-size:20px;font-weight:800;color:var(--white);margin-bottom:6px;}
+    .contact-info p{font-size:14px;color:var(--muted);}
+    .contact-info a{color:var(--ex-blue);text-decoration:none;}
+
+    /* ── ALERT BANNER ── */
+    .alert-banner{background:rgba(0,161,224,.1);border:1px solid rgba(0,161,224,.25);border-radius:12px;padding:16px 24px;display:flex;gap:12px;align-items:center;margin-bottom:32px;}
+    .alert-banner.rn{background:rgba(244,132,106,.08);border-color:rgba(244,132,106,.25);}
+    .alert-banner p{font-size:14px;color:rgba(255,255,255,.85);}
+    .alert-banner strong{color:var(--sf-blue);}
+    .alert-banner.rn strong{color:var(--rn-coral);}
+
+    /* FOOTER */
+    footer{background:#0a0a0a;border-top:1px solid var(--border);padding:40px;text-align:center;}
+    footer p{color:#444;font-size:13px;margin-top:6px;}
+    footer strong{color:var(--rn-coral);}
+
+    @media(max-width:768px){
+      .main-tabs{padding:0 16px;flex-wrap:wrap;}
+      .section{padding:48px 20px;}
+      .hero{padding:60px 20px 50px;}
+      .compare-grid{grid-template-columns:1fr;}
+      .tab-btn{padding:10px 14px;font-size:13px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- MAIN TABS NAV -->
+<nav class="main-tabs">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <span class="brand-name">Banco Integral</span>
+  </div>
+  <div class="tab-nav">
+    <button class="tab-btn sf active" onclick="switchTab('sf',this)">☁️ Salesforce</button>
+    <button class="tab-btn rn" onclick="switchTab('rn',this)">⚡ Reach Now</button>
+    <button class="tab-btn ex" onclick="switchTab('ex',this)">🌎 Expand</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     TAB 1: SALESFORCE
+══════════════════════════════════════════ -->
+<div id="tab-sf" class="tab-content active">
+
+  <!-- HERO SF -->
+  <div class="hero sf-hero">
+    <div class="hero-tag sf-tag">Salesforce Financial Services Cloud</div>
+    <h1>Transformación Digital<br><span class="accent-sf">del Crédito</span> en Banco Integral</h1>
+    <p>Automatización end-to-end del proceso de originación de crédito con IA, integración nativa y trazabilidad completa sobre Salesforce FSC.</p>
+    <div class="hero-pills">
+      <span class="pill pill-sf">Financial Services Cloud</span>
+      <span class="pill pill-sf">Agentforce AI</span>
+      <span class="pill pill-sf">OmniStudio</span>
+      <span class="pill pill-sf">200 usuarios</span>
+      <span class="pill pill-sf">52% descuento</span>
+    </div>
+  </div>
+
+  <!-- OBJETIVO ESTRATÉGICO -->
+  <section class="section bg-alt">
+    <div class="section-inner">
+      <div class="sec-tag sf">Objetivo Estratégico</div>
+      <h2 class="sec-title">Meta de Transformación</h2>
+      <div class="divider sf"></div>
+      <div class="alert-banner" style="margin-bottom:40px;">
+        <span style="font-size:22px;">🎯</span>
+        <p><strong>Transformar el proceso de originación de crédito</strong> mediante automatización, IA e integración con Bantotal y OnBase — eliminando el trabajo manual y los reprocesos entre sistemas.</p>
+      </div>
+      <div class="cards">
+        <div class="card sf-card">
+          <div class="card-icon">⏱️</div>
+          <h3>Reducir tiempos de evaluación</h3>
+          <p>Del llenado manual de formularios a captura guiada con precarga automática desde el core bancario.</p>
+        </div>
+        <div class="card sf-card">
+          <div class="card-icon">🔄</div>
+          <h3>Disminuir reprocesos</h3>
+          <p>Eliminación de la doble captura entre sistemas desconectados. Los datos fluyen automáticamente.</p>
+        </div>
+        <div class="card sf-card">
+          <div class="card-icon">📊</div>
+          <h3>Mejorar calidad de información</h3>
+          <p>Validación documental automática con IDP y certificación humana solo donde sea necesario.</p>
+        </div>
+        <div class="card sf-card">
+          <div class="card-icon">🚀</div>
+          <h3>Aumentar productividad</h3>
+          <p>Los asesores se liberan de tareas repetitivas. Agentforce asiste en tiempo real durante todo el proceso.</p>
+        </div>
+        <div class="card sf-card">
+          <div class="card-icon">📈</div>
+          <h3>Escalar gradualmente</h3>
+          <p>Arquitectura por capas diseñada para crecer a nuevos productos y países sin deuda técnica.</p>
+        </div>
+        <div class="card sf-card" style="border-color:rgba(0,161,224,.3);background:rgba(0,161,224,.05);">
+          <div class="card-icon">🧠</div>
+          <h3>Agentforce incluido</h3>
+          <p><strong style="color:var(--sf-blue);">200,000 flex credits activados gratuitamente.</strong> IA que resume información, marca riesgos y explica decisiones en lenguaje natural.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SITUACIÓN ACTUAL -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="sec-tag sf">Diagnóstico</div>
+      <h2 class="sec-title">Situación Actual – Retos Identificados</h2>
+      <div class="divider sf"></div>
+      <p class="sec-desc">El proceso actual de originación de crédito presenta retos operativos que alargan el ciclo, incrementan costos y desgastan la experiencia del asesor y del cliente.</p>
+      <div class="cards">
+        <div class="card sf-card"><div class="card-icon">📝</div><h3>Carga manual de información</h3><p>El asesor completa formularios sin precarga desde Bantotal, duplicando el tiempo de captura.</p></div>
+        <div class="card sf-card"><div class="card-icon">📁</div><h3>Revisión documental intensiva</h3><p>Recolección y validación de documentos a mano, con alta variabilidad en calidad y completitud.</p></div>
+        <div class="card sf-card"><div class="card-icon">🔃</div><h3>Reprocesos por documentos incompletos</h3><p>Las solicitudes incompletas generan ida y vuelta que alarga el ciclo hasta semanas.</p></div>
+        <div class="card sf-card"><div class="card-icon">💻</div><h3>Sistemas desconectados</h3><p>Bantotal, OnBase, buró y scoring operan en silos. El asesor copia datos entre pantallas.</p></div>
+        <div class="card sf-card"><div class="card-icon">🎫</div><h3>Excepciones por tickets</h3><p>Las excepciones se resuelven por mesas de ayuda, sin trazabilidad ni tiempo de respuesta garantizado.</p></div>
+        <div class="card sf-card"><div class="card-icon">🔍</div><h3>Falta de trazabilidad end-to-end</h3><p>No existe una vista unificada del estado de cada solicitud desde el inicio hasta el desembolso.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FSC VALUE -->
+  <section class="section bg-alt">
+    <div class="section-inner">
+      <div class="sec-tag sf">Salesforce Financial Services Cloud</div>
+      <h2 class="sec-title">La Plataforma para Banca</h2>
+      <div class="divider sf"></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
+        <div style="background:linear-gradient(135deg,#032D60,#0B5CAB);border-radius:16px;padding:32px;">
+          <div style="font-size:32px;margin-bottom:14px;">🏦</div>
+          <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:10px;">Financial Services Cloud</h3>
+          <p style="color:rgba(255,255,255,.7);font-size:14px;line-height:1.65;">Construido para banca y servicios financieros. Person Accounts, Financial Accounts, Action Plans y motor de decisión nativos — sin customización costosa.</p>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;">
+          <div style="font-size:32px;margin-bottom:14px;">🔌</div>
+          <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:10px;">OmniStudio</h3>
+          <p style="color:var(--muted);font-size:14px;line-height:1.65;">Flujos guiados (OmniScript), FlexCards y Integration Procedures para digitalizar el proceso de punta a punta sin código complejo.</p>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;">
+          <div style="font-size:32px;margin-bottom:14px;">⚡</div>
+          <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:10px;">Agentforce</h3>
+          <p style="color:var(--muted);font-size:14px;line-height:1.65;">Agentes autónomos que asisten al asesor: resumen económico automático, documentos faltantes, explicación de decisiones en lenguaje natural.</p>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;">
+          <div style="font-size:32px;margin-bottom:14px;">🔗</div>
+          <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:10px;">Integración nativa</h3>
+          <p style="color:var(--muted);font-size:14px;line-height:1.65;">Bantotal, OnBase, IDP, Buró y Motor de decisión se integran como adapters desacoplados. Sin reemplazar lo que ya funciona.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 2: REACH NOW
+══════════════════════════════════════════ -->
+<div id="tab-rn" class="tab-content">
+
+  <!-- HERO RN -->
+  <div class="hero rn-hero" style="border-bottom:1px solid #1a1a1a;">
+    <div class="hero-tag rn-tag">Partner de Implementación</div>
+    <h1><span class="accent-rn">ReachNow</span><br>Especialistas en Banca Digital</h1>
+    <p>Firma de consultoría en tecnología especializada en Customer Experience. Más de una década digitalizando procesos críticos de banca sobre Salesforce FSC.</p>
+    <div class="hero-pills">
+      <span class="pill pill-rn">FSC · OmniStudio</span>
+      <span class="pill pill-rn">12 Sprints · 24 Semanas</span>
+      <span class="pill pill-rn">Inversión: $51,300</span>
+      <span class="pill pill-rn">Metodología Scrum</span>
+    </div>
+  </div>
+
+  <!-- QUIÉNES SOMOS -->
+  <section class="section bg-alt">
+    <div class="section-inner">
+      <div class="sec-tag rn">Quiénes Somos</div>
+      <h2 class="sec-title">ReachNow · Consultoría en CX & Salesforce</h2>
+      <div class="divider rn"></div>
+      <p class="sec-desc">Firma especializada en Experiencia del Cliente. Implementamos Salesforce Financial Services Cloud, OmniStudio e integraciones a medida para banca y servicios financieros.</p>
+      <div class="cards">
+        <div class="card rn-card"><div class="card-icon">💡</div><h3>Customer Obsessed</h3><p>Cada decisión se toma pensando en el cliente final. El asesor y el deudor son el centro del diseño.</p></div>
+        <div class="card rn-card"><div class="card-icon">🏃</div><h3>Agile</h3><p>Scrum con entregas incrementales. Valor visible desde el primer mes, no al final del proyecto.</p></div>
+        <div class="card rn-card"><div class="card-icon">🔍</div><h3>Transparent & Clear</h3><p>Reportes semanales, demos por sprint, sin sorpresas. Lo que ves en el backlog es lo que se entrega.</p></div>
+        <div class="card rn-card"><div class="card-icon">🎯</div><h3>Focus</h3><p>Foco exclusivo en Salesforce para banca. No somos generalistas — sabemos exactamente cómo funciona FSC.</p></div>
+        <div class="card rn-card"><div class="card-icon">🏦</div><h3>Industrias</h3><p>Insurance · Healthcare · Telco · Retail y consumo masivo · Banca y Servicios Financieros.</p></div>
+        <div class="card rn-card"><div class="card-icon">📅</div><h3>+10 años de experiencia</h3><p>Equipo senior con profundo conocimiento en Marketing, CRM, Servicio al Cliente y Tecnología financiera.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESO AS-IS vs TO-BE -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="sec-tag rn">Diagnóstico</div>
+      <h2 class="sec-title">De dónde venimos — hacia dónde vamos</h2>
+      <div class="divider rn"></div>
+      <div class="compare-grid">
+        <div class="compare-col from">
+          <h3>Hoy (as-is)</h3>
+          <ul>
+            <li>Formularios manuales y reprocesos entre sistemas</li>
+            <li>Recolección y validación documental a mano</li>
+            <li>Firma presencial que alarga el cierre</li>
+            <li>Sistemas desconectados: el asesor copia datos entre pantallas</li>
+            <li>Excepciones resueltas por tickets y mesas de ayuda</li>
+            <li>Baja confianza en la data extraída automáticamente</li>
+          </ul>
+        </div>
+        <div class="compare-col to">
+          <h3>Visión (to-be) — 100% Digital</h3>
+          <ul>
+            <li>Captura guiada que precarga datos del core bancario</li>
+            <li>Checklist automático con extracción documental (IDP)</li>
+            <li>Firma electrónica DocuSign integrada en OmniScript</li>
+            <li>Bantotal, OnBase, Buró y Scoring orquestados por Salesforce</li>
+            <li>Excepciones por reglas con Business Rules Engine</li>
+            <li>Certificación humana solo para campos de baja confiabilidad</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESO TO-BE 5 PASOS -->
+  <section class="section bg-alt">
+    <div class="section-inner">
+      <div class="sec-tag rn">Proceso To-Be</div>
+      <h2 class="sec-title">Otorgamiento de Crédito — Mismo proceso, ahora digital</h2>
+      <div class="divider rn"></div>
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-num rn">1</div>
+          <h4>Solicitud</h4>
+          <p>Captura guiada y precarga</p>
+          <div class="step-comps">
+            <span class="comp-chip">OmniScript</span>
+            <span class="comp-chip">Person Account</span>
+            <span class="comp-chip">Bantotal</span>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num rn">2</div>
+          <h4>Documentación</h4>
+          <p>Checklist y extracción automática</p>
+          <div class="step-comps">
+            <span class="comp-chip">Action Plans</span>
+            <span class="comp-chip">IDP</span>
+            <span class="comp-chip">Platform Events</span>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num rn">3</div>
+          <h4>Evaluación</h4>
+          <p>Decisión automática por reglas</p>
+          <div class="step-comps">
+            <span class="comp-chip">BRE</span>
+            <span class="comp-chip">Expression Sets</span>
+            <span class="comp-chip">Scoring</span>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num rn">4</div>
+          <h4>Aprobación</h4>
+          <p>Excepciones por reglas</p>
+          <div class="step-comps">
+            <span class="comp-chip">Decision Tables</span>
+            <span class="comp-chip">Aprobación Flow</span>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num rn">5</div>
+          <h4>Cierre</h4>
+          <p>Firma y desembolso digital</p>
+          <div class="step-comps">
+            <span class="comp-chip">DocuSign</span>
+            <span class="comp-chip">OnBase</span>
+            <span class="comp-chip">Bantotal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARQUITECTURA -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="sec-tag rn">Arquitectura</div>
+      <h2 class="sec-title">Arquitectura por Capas — Salesforce FSC</h2>
+      <div class="divider rn"></div>
+      <p class="sec-desc">Responsabilidades separadas para que el resultado sea mantenible, escalable y sin deuda técnica. Solo llamadas hacia abajo.</p>
+      <div class="arch-layers">
+        <div class="arch-layer blue">
+          <div><h4>Presentación</h4><p style="font-size:12px;color:var(--muted);margin-top:3px;">Solo arma la pantalla; no toca datos</p></div>
+          <span>OmniScript · Experience Cloud</span>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer blue">
+          <div><h4>Orquestación</h4><p style="font-size:12px;color:var(--muted);margin-top:3px;">Coordina pasos y llama a los servicios</p></div>
+          <span>Integration Procedures · Flows</span>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer coral">
+          <div><h4>Servicios (negocio)</h4><p style="font-size:12px;color:var(--muted);margin-top:3px;">Lógica de negocio en Apex, independiente del canal</p></div>
+          <span>Servicios Apex · Motor de decisión (BRE)</span>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer blue">
+          <div><h4>Dominio y datos</h4><p style="font-size:12px;color:var(--muted);margin-top:3px;">Comportamiento, SOQL aislado y transaccionalidad</p></div>
+          <span>Domain · Selector · Unit of Work</span>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer gray">
+          <div><h4>Integración</h4><p style="font-size:12px;color:var(--muted);margin-top:3px;">Adapters que aíslan cada sistema externo</p></div>
+          <span>Named Credentials · Platform Events</span>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer gray">
+          <div><h4>Sistemas externos</h4><p style="font-size:12px;color:var(--muted);margin-top:3px;">Activos del banco, sin modificación</p></div>
+          <span>Bantotal · OnBase · IDP · Buró · Scoring</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGENTFORCE -->
+  <section class="section bg-alt">
+    <div class="section-inner">
+      <div class="sec-tag rn">Agentforce</div>
+      <h2 class="sec-title">Agentes de IA que aceleran el onboarding</h2>
+      <div class="divider rn"></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:28px;">
+        <div style="background:var(--card);border:1px solid rgba(244,132,106,.25);border-radius:16px;padding:28px;">
+          <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--rn-coral);margin-bottom:10px;">AGENTE · ASESOR</div>
+          <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:8px;">Asistente de Originación</h3>
+          <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">Acelera el onboarding del asesor</p>
+          <ul style="list-style:none;font-size:13px;color:rgba(255,255,255,.75);display:flex;flex-direction:column;gap:7px;">
+            <li>▸ Resume la información económica</li>
+            <li>▸ Marca riesgos e inconsistencias</li>
+            <li>▸ Indica qué documentos faltan</li>
+            <li>▸ Explica la decisión en lenguaje natural</li>
+          </ul>
+        </div>
+        <div style="background:var(--card);border:1px solid rgba(244,132,106,.25);border-radius:16px;padding:28px;">
+          <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--rn-coral);margin-bottom:10px;">AGENTE · DOCUMENTOS</div>
+          <h3 style="color:#fff;font-size:18px;font-weight:800;margin-bottom:8px;">Revisión Documental</h3>
+          <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">Valida y prepara la documentación</p>
+          <ul style="list-style:none;font-size:13px;color:rgba(255,255,255,.75);display:flex;flex-direction:column;gap:7px;">
+            <li>▸ Persigue documentos y firmas faltantes</li>
+            <li>▸ Arma el borrador del resumen económico</li>
+            <li>▸ Lee la extracción del IDP del banco</li>
+            <li>▸ IDP del banco · Data Cloud opcional</li>
+          </ul>
+        </div>
+      </div>
+      <div class="alert-banner rn">
+        <span style="font-size:20px;">💡</span>
+        <p>Las acciones de los agentes invocan los mismos servicios Apex y el motor de decisión. <strong>Los agentes asisten y ejecutan, no reemplazan la decisión.</strong> La decisión sigue en el BRE auditable, con el asesor en el lazo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="sec-tag rn">Roadmap</div>
+      <h2 class="sec-title">Plan de Implementación — 24 Semanas · 12 Sprints</h2>
+      <div class="divider rn"></div>
+      <div class="roadmap-grid" style="margin-bottom:48px;">
+        <div class="rm-card">
+          <div class="rm-badge rm-r1">Release 1 · Sprints 1–5</div>
+          <div class="rm-sprint" style="color:var(--rn-coral);">FASE 0 + FASE 1</div>
+          <h3>Fundaciones & MVP</h3>
+          <p>Arquitectura, CI/CD, modelo de datos, captura guiada y decisión preliminar automatizada. <strong style="color:rgba(255,255,255,.8);">Primer valor en producción.</strong></p>
+        </div>
+        <div class="rm-card">
+          <div class="rm-badge rm-r2">Release 2 · Sprints 6–9</div>
+          <div class="rm-sprint" style="color:#80AAFF;">FASE 2</div>
+          <h3>Riesgo y Aprobación</h3>
+          <p>Buró, scoring, IDP con extracción, resumen económico, excepciones y flujo de aprobación completo.</p>
+        </div>
+        <div class="rm-card">
+          <div class="rm-badge rm-r3">Release 3 · Sprints 10–12</div>
+          <div class="rm-sprint" style="color:var(--ex-yellow);">FASE 3</div>
+          <h3>Cierre y Go-Live</h3>
+          <p>Firma DocuSign, archivo OnBase, desembolso Bantotal, estabilización y salida a producción con hypercare.</p>
+        </div>
+      </div>
+
+      <!-- SPRINT TABLES -->
+      <h3 style="font-size:16px;font-weight:700;color:var(--rn-coral);margin-bottom:16px;">Release 1 — MVP: Captura digital y decisión preliminar</h3>
+      <div style="overflow-x:auto;margin-bottom:40px;">
+        <table class="sprint-table">
+          <thead><tr><th>Sprint</th><th>Objetivo</th><th>Entregables clave</th></tr></thead>
+          <tbody>
+            <tr><td class="sprint-id">S1 · Fundaciones</td><td class="sprint-obj">Entorno listo y arquitectura definida</td><td class="sprint-del">FSC + OmniStudio + BRE habilitados · CI/CD · Decisión del objeto de originación</td></tr>
+            <tr><td class="sprint-id">S2 · Modelo y capas</td><td class="sprint-obj">Modelo de datos y arquitectura de punta a punta</td><td class="sprint-del">Person Account, Financial Account, objeto de solicitud · Tracer bullet OmniScript→Apex→Selector</td></tr>
+            <tr><td class="sprint-id">S3 · Intake guiado</td><td class="sprint-obj">Reemplazar llenado manual</td><td class="sprint-del">Assessment con ramificación · Campos editables vs. del core · Demo sin formularios</td></tr>
+            <tr><td class="sprint-id">S4 · Core y checklist</td><td class="sprint-obj">Precargar datos reales y checklist documental</td><td class="sprint-del">Adapter Bantotal · Action Plan Template + Document Checklist Items</td></tr>
+            <tr><td class="sprint-id">S5 · Decisión preliminar</td><td class="sprint-obj">Pre-evaluación automática</td><td class="sprint-del">Decision Tables de validación y monto · Resultado en FlexCard · Release 1 desplegable</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font-size:16px;font-weight:700;color:#80AAFF;margin-bottom:16px;">Release 2 — Riesgo, Excepciones y Aprobación</h3>
+      <div style="overflow-x:auto;margin-bottom:40px;">
+        <table class="sprint-table">
+          <thead><tr><th>Sprint</th><th>Objetivo</th><th>Entregables clave</th></tr></thead>
+          <tbody>
+            <tr><td class="sprint-id" style="color:#80AAFF;">S6 · Buró y scoring</td><td class="sprint-obj">Riesgo externo integrado</td><td class="sprint-del">Adapters a buró, listas y scoring · Continuations y cacheo · Resultados en BRE</td></tr>
+            <tr><td class="sprint-id" style="color:#80AAFF;">S7 · IDP y resumen</td><td class="sprint-obj">Extracción documental automatizada</td><td class="sprint-del">Extracción vía Platform Event · Pantalla de certificación · Resumen económico para el asesor</td></tr>
+            <tr><td class="sprint-id" style="color:#80AAFF;">S8 · Excepciones</td><td class="sprint-obj">Excepciones por reglas y aprobación</td><td class="sprint-del">Matriz de excepciones en BRE · Flujo de aprobación · Tickets a colas para casos que escalan</td></tr>
+            <tr><td class="sprint-id" style="color:#80AAFF;">S9 · Buffer</td><td class="sprint-obj">Absorber desbordes de integración</td><td class="sprint-del">Estabilización de integraciones S6–S8 · Adelanto de historias R3 si no se consume</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font-size:16px;font-weight:700;color:var(--ex-yellow);margin-bottom:16px;">Release 3 — Cierre Digital y Producción</h3>
+      <div style="overflow-x:auto;margin-bottom:16px;">
+        <table class="sprint-table">
+          <thead><tr><th>Sprint</th><th>Objetivo</th><th>Entregables clave</th></tr></thead>
+          <tbody>
+            <tr><td class="sprint-id" style="color:var(--ex-yellow);">S10 · Docs y firma</td><td class="sprint-obj">Firma digital y notificaciones</td><td class="sprint-del">Generación de docs de crédito · Firma DocuSign en OmniScript · SMS, WhatsApp, email</td></tr>
+            <tr><td class="sprint-id" style="color:var(--ex-yellow);">S11 · Archivo y desembolso</td><td class="sprint-obj">Cerrar el ciclo completo</td><td class="sprint-del">Archivo en OnBase · Desembolso en Bantotal como evento confirmado</td></tr>
+            <tr><td class="sprint-id" style="color:var(--ex-yellow);">S12 · Go-live</td><td class="sprint-obj">Producción controlada</td><td class="sprint-del">Seguridad Shield · Pruebas no funcionales · Salida a producción y hypercare</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- INVERSIÓN RN -->
+  <section class="section bg-alt">
+    <div class="section-inner">
+      <div class="sec-tag rn">Inversión</div>
+      <h2 class="sec-title">Inversión en Implementación</h2>
+      <div class="divider rn"></div>
+      <div class="inv-grid">
+        <div class="inv-card main-inv">
+          <div class="inv-label">Implementación Total</div>
+          <div class="inv-price">$51,300</div>
+          <div class="inv-sub">USD · Sin impuestos</div>
+        </div>
+        <div class="inv-card sec-inv">
+          <div class="inv-label">Pago inicial</div>
+          <div class="inv-price" style="font-size:28px;">40%</div>
+          <div class="inv-sub">$20,520 al arranque</div>
+        </div>
+        <div class="inv-card sec-inv">
+          <div class="inv-label">Pagos mensuales</div>
+          <div class="inv-price" style="font-size:28px;">10%</div>
+          <div class="inv-sub">$5,130/mes · 6 meses</div>
+        </div>
+      </div>
+      <div class="terms-grid">
+        <div class="term-item"><div class="term-icon">💵</div><div><h4>Precio en USD</h4><p>Impuestos no incluidos</p></div></div>
+        <div class="term-item"><div class="term-icon">📅</div><div><h4>Duración</h4><p>24 semanas · 12 Sprints · Scrum</p></div></div>
+        <div class="term-item"><div class="term-icon">🚀</div><div><h4>Primer valor</h4><p>Release 1 desplegable al finalizar sprint 5</p></div></div>
+        <div class="term-item"><div class="term-icon">⚡</div><div><h4>Agentforce incluido</h4><p>200k flex credits activados gratuitamente</p></div></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 3: EXPAND
+══════════════════════════════════════════ -->
+<div id="tab-ex" class="tab-content">
+
+  <!-- HERO EXPAND -->
+  <div class="hero ex-hero">
+    <div class="hero-tag ex-tag">Reseller Autorizado Salesforce</div>
+    <h1><span class="accent-ex">Expand</span> × Xentric360<br>Oferta de Licenciamiento</h1>
+    <p>El reseller autorizado de Salesforce para México, Centroamérica, Ecuador y El Caribe. Facturación local en 11 países. Propuesta para Banco Integral — Junio 2026.</p>
+    <div class="hero-pills">
+      <span class="pill pill-ex">Financial Services Cloud EE</span>
+      <span class="pill pill-ex">200 usuarios</span>
+      <span class="pill pill-ex">52% descuento</span>
+      <span class="pill pill-ex">$299,460 · 24 meses</span>
+    </div>
+  </div>
+
+  <!-- QUIÉNES SOMOS EXPAND -->
+  <section class="section bg-alt">
+    <div class="section-inner">
+      <div class="sec-tag ex">Quiénes Somos</div>
+      <h2 class="sec-title">El Reseller Autorizado de Salesforce</h2>
+      <div class="divider ex"></div>
+      <p class="sec-desc">Expand | Xentric360 es el distribuidor especializado de licencias Salesforce para México, Centroamérica, Ecuador y El Caribe, con presencia y facturación local en 11 países.</p>
+      <div class="benefit-grid">
+        <div class="benefit-item"><div class="benefit-num">1</div><p>Distribuidor especializado en Salesforce — no somos generalistas.</p></div>
+        <div class="benefit-item"><div class="benefit-num">2</div><p>Vendemos licencias de <strong style="color:var(--white);">todas las soluciones Salesforce</strong>: Sales, Service, Marketing, FSC, Agentforce y más.</p></div>
+        <div class="benefit-item"><div class="benefit-num">3</div><p>Facturación y pago local en <strong style="color:var(--white);">11 países</strong> de la región — sin complicaciones de divisas.</p></div>
+        <div class="benefit-item"><div class="benefit-num">4</div><p>Acompañamiento completo más allá de la venta: inicio, adopción y renovación.</p></div>
+        <div class="benefit-item"><div class="benefit-num">5</div><p>Trabajamos con <strong style="color:var(--white);">todos los Socios Implementadores certificados</strong> — el cliente elige libremente.</p></div>
+        <div class="benefit-item"><div class="benefit-num">6</div><p>Flexibilidad en procesos administrativos y términos contractuales.</p></div>
+        <div class="benefit-item"><div class="benefit-num">7</div><p>Buenos precios con descuentos regionales negociados directamente con Salesforce.</p></div>
+        <div class="benefit-item"><div class="benefit-num">8</div><p>Customer Success impulsa la adopción y la autonomía del cliente post-contrato.</p></div>
+        <div class="benefit-item"><div class="benefit-num">9</div><p>Respuesta oportuna a consultas — equipo dedicado en zona horaria LATAM.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAÍSES -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="sec-tag ex">Presencia Regional</div>
+      <h2 class="sec-title">Facturación Local en 11 Países</h2>
+      <div class="divider ex"></div>
+      <div class="countries-grid">
+        <div class="country-chip">🇲🇽 México</div>
+        <div class="country-chip">🇬🇹 Guatemala</div>
+        <div class="country-chip">🇭🇳 Honduras</div>
+        <div class="country-chip">🇸🇻 El Salvador</div>
+        <div class="country-chip">🇳🇮 Nicaragua</div>
+        <div class="country-chip">🇨🇷 Costa Rica</div>
+        <div class="country-chip">🇵🇦 Panamá</div>
+        <div class="country-chip">🇪🇨 Ecuador</div>
+        <div class="country-chip">🇯🇲 Jamaica</div>
+        <div class="country-chip">🇩🇴 Rep. Dominicana</div>
+        <div class="country-chip">🇵🇷 Puerto Rico</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LICENCIAMIENTO -->
+  <section class="section bg-alt">
+    <div class="section-inner">
+      <div class="sec-tag ex">Valor del Licenciamiento</div>
+      <h2 class="sec-title">Propuesta a 24 Meses — Financial Services Cloud</h2>
+      <div class="divider ex"></div>
+
+      <!-- PRECIO HIGHLIGHT -->
+      <div style="background:linear-gradient(90deg,#032D60,#1E6AE1);border-radius:14px;padding:20px 28px;margin-bottom:32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="font-size:32px;font-weight:900;color:#FFD700;">$80.59</div>
+        <div style="color:rgba(255,255,255,.85);font-size:14px;">precio fijo por usuario · Financial Services Cloud Enterprise Edition · <strong>200 usuarios · 52% de descuento sobre precio de lista</strong></div>
+      </div>
+
+      <!-- TIMELINE ACTIVACIÓN -->
+      <h3 style="font-size:15px;font-weight:700;color:var(--white);margin-bottom:16px;">Plan de Activación</h3>
+      <div class="timeline-strip">
+        <div class="tl-point">
+          <div class="tl-dot active"></div>
+          <div class="tl-label">Mes 1</div>
+          <div class="tl-sub">20 licencias activas</div>
+        </div>
+        <div class="tl-line"></div>
+        <div class="tl-point">
+          <div class="tl-dot active"></div>
+          <div class="tl-label">Mes 6</div>
+          <div class="tl-sub">+180 licencias</div>
+        </div>
+        <div class="tl-line" style="background:linear-gradient(90deg,#555,#555);"></div>
+        <div class="tl-point">
+          <div class="tl-dot inactive"></div>
+          <div class="tl-label">Mes 7–23</div>
+          <div class="tl-sub">200 usuarios activos</div>
+        </div>
+        <div class="tl-line" style="background:#333;"></div>
+        <div class="tl-point">
+          <div class="tl-dot inactive"></div>
+          <div class="tl-label">Mes 24</div>
+          <div class="tl-sub">Fin de contrato</div>
+        </div>
+      </div>
+
+      <!-- TABLA LICENCIAS -->
+      <div style="overflow-x:auto;margin-bottom:32px;">
+        <table class="lic-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Plazo</th>
+              <th>Licencias</th>
+              <th style="text-align:right;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong style="color:var(--white);">FSC Sales EE (RU)</strong><br><span style="font-size:11px;color:var(--muted);">Activación inicial</span></td>
+              <td>12 meses</td>
+              <td>20</td>
+              <td style="text-align:right;font-weight:700;color:#80AAFF;">$19,320</td>
+            </tr>
+            <tr>
+              <td><strong style="color:var(--white);">FSC Sales EE (RU)</strong><br><span style="font-size:11px;color:var(--muted);">Segunda activación (mes 6)</span></td>
+              <td>6 meses</td>
+              <td>180</td>
+              <td style="text-align:right;font-weight:700;color:#80AAFF;">$86,940</td>
+            </tr>
+            <tr style="background:rgba(30,106,225,.1);">
+              <td colspan="3" style="font-weight:800;color:var(--white);">Total Año 1</td>
+              <td style="text-align:right;font-size:18px;font-weight:900;color:var(--ex-yellow);">$106,260</td>
+            </tr>
+            <tr>
+              <td><strong style="color:var(--white);">FSC Sales EE (RU)</strong><br><span style="font-size:11px;color:var(--muted);">Año 2 completo</span></td>
+              <td>12 meses</td>
+              <td>200</td>
+              <td style="text-align:right;font-weight:700;color:#80AAFF;">$193,200</td>
+            </tr>
+            <tr style="background:rgba(30,106,225,.1);">
+              <td colspan="3" style="font-weight:800;color:var(--white);">Total Año 2</td>
+              <td style="text-align:right;font-size:18px;font-weight:900;color:var(--ex-yellow);">$193,200</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" style="background:#1E6AE1;color:#fff;font-weight:900;font-size:15px;letter-spacing:.5px;padding:16px;">INVERSIÓN TOTAL · 24 MESES</td>
+              <td style="background:#1E6AE1;color:#FFD700;font-weight:900;font-size:22px;text-align:right;padding:16px;">$299,460</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- AGENTFORCE BANNER -->
+      <div style="background:rgba(0,161,224,.08);border:1px solid rgba(0,161,224,.25);border-radius:12px;padding:20px 24px;display:flex;gap:14px;align-items:flex-start;">
+        <div style="font-size:28px;">⚡</div>
+        <div>
+          <div style="font-weight:700;color:var(--sf-blue);font-size:15px;margin-bottom:4px;">Agentforce — 200k flex credits activados gratuitamente</div>
+          <p style="font-size:13px;color:var(--muted);">Se debe dar seguimiento al consumo de créditos para estimar correctamente los paquetes requeridos para el proyecto. El equipo de Expand acompaña este proceso.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TÉRMINOS -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="sec-tag ex">Términos y Condiciones</div>
+      <h2 class="sec-title">Condiciones Comerciales</h2>
+      <div class="divider ex"></div>
+      <div class="terms-grid">
+        <div class="term-item"><div class="term-icon">📋</div><div><h4>Contrato de 24 meses</h4><p>Licenciamiento comprometido a 24 meses con precio fijo garantizado.</p></div></div>
+        <div class="term-item"><div class="term-icon">⏰</div><div><h4>Oferta válida hasta el 20 julio 2026</h4><p>Precios y descuentos sujetos a cambio después de esta fecha.</p></div></div>
+        <div class="term-item"><div class="term-icon">💵</div><div><h4>Precios en USD</h4><p>No incluyen impuestos locales. Monto a facturar en El Salvador.</p></div></div>
+        <div class="term-item"><div class="term-icon">🗓️</div><div><h4>Facturación anual</h4><p>Pago adelantado por año. Ciclos anuales.</p></div></div>
+        <div class="term-item"><div class="term-icon">📅</div><div><h4>Términos de pago</h4><p>15 días a partir de la fecha de emisión de la factura.</p></div></div>
+        <div class="term-item"><div class="term-icon">🛠️</div><div><h4>Soporte Standard incluido</h4><p>Soporte Salesforce Standard incluido en el licenciamiento.</p></div></div>
+        <div class="term-item"><div class="term-icon">🔧</div><div><h4>Sin implementación</h4><p>Esta oferta no incluye servicios de implementación (ver ReachNow).</p></div></div>
+        <div class="term-item"><div class="term-icon">🌎</div><div><h4>Facturación local disponible</h4><p>El Salvador · Guatemala · Panamá · Ecuador y más.</p></div></div>
+      </div>
+
+      <!-- CONTACTO -->
+      <div style="margin-top:48px;" class="contact-card">
+        <div style="font-size:48px;">👤</div>
+        <div class="contact-info">
+          <h3>Pablo Morales</h3>
+          <p>Account Executive · Ecuador</p>
+          <p style="margin-top:8px;"><a href="mailto:pmorales@expandlatam.com">pmorales@expandlatam.com</a></p>
+          <p style="margin-top:4px;font-size:13px;">@expandlatam · @xentric360 · <a href="https://www.expandlatam.com" target="_blank">expandlatam.com</a> · <a href="https://www.xentric360.com" target="_blank">xentric360.com</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p><strong>Banco Integral</strong> · Propuesta Salesforce FSC</p>
+  <p>ReachNow · Implementación · Expand · Xentric360 · Licenciamiento · Junio 2026</p>
+  <p style="margin-top:16px;font-size:11px;">Información confidencial. Propuesta válida por 30 días desde su presentación.</p>
+</footer>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
